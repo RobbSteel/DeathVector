@@ -13,6 +13,8 @@ public class Tower : Photon.MonoBehaviour {
 	private float shields_display = 0;
 	public BuildCircleMesh circular_shield;
 	public ObjectiveManager game_manager;
+	public VectorGrid m_VectorGrid;
+	public Color tower_color;
 
 	// Use this for initialization
 	void Start () {
@@ -38,6 +40,7 @@ public class Tower : Photon.MonoBehaviour {
 			 if(PhotonNetwork.isMasterClient){
 				game_manager.TowerDown();
 			 }
+			m_VectorGrid.AddGridForce(transform.position, 1f, 1f, tower_color, true);
 			gameObject.SetActive(false);
 		}
 		shields_left -= 10;
