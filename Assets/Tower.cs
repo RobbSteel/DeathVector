@@ -16,6 +16,8 @@ public class Tower : Photon.MonoBehaviour {
 	public VectorGrid m_VectorGrid;
 	public Color tower_color;
 	public string Tower_Type;
+	public UILabel TeamWins;
+	public int Death_Award;
 
 	// Use this for initialization
 	void Start () {
@@ -39,7 +41,7 @@ public class Tower : Photon.MonoBehaviour {
 		if(shields_left == 0){
 			Instantiate(explosion, transform.position, transform.rotation);
 			 if(PhotonNetwork.isMasterClient){
-				game_manager.TowerDown();
+				game_manager.TowerDown(Death_Award);
 			 }
 			m_VectorGrid.AddGridForce(transform.position, 1f, 1f, tower_color, true);
 			gameObject.SetActive(false);

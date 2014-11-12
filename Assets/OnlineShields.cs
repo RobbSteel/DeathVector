@@ -105,8 +105,6 @@ public class OnlineShields : Photon.MonoBehaviour {
 	void Revive(){
 		circular_shield.startAngle = 0;
 		Player_Avatar.SetActive (true);
-
-
 	}
 
 	void Update(){

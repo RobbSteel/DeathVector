@@ -11,6 +11,8 @@ public class ObjectiveManager : Photon.MonoBehaviour {
 	public float round_number;
 	public UILabel Map_Info;
 	private bool ready_reset;
+	public UILabel Team1_Victory;
+	public UILabel Team2_Victory;
 
 
 	// Use this for initialization
@@ -22,9 +24,25 @@ public class ObjectiveManager : Photon.MonoBehaviour {
 
 	}
 
-	public void TowerDown(){
+	public void TowerDown(int team_type){
 		Next_round_time = 5;
 		ready_reset = true;
+		if (team_type == 1) {
+			Team1_Wins++;
+			photonView.RPC("TowerWin", PhotonTargets.All, team_type, Team1_Wins);
+		} else {
+			Team2_Wins++;
+			photonView.RPC("TowerWin", PhotonTargets.All, team_type, Team2_Wins);
+		}
+	}
+
+	[RPC]
+	void TowerWin(int team_type, float Team_Wins){
+		if (team_type == 1) {
+			Team1_Victory.text = "Team 1: " + Team_Wins;
+		} else {
+			Team2_Victory.text = "Team 2: " + Team_Wins;
+		}
 	}
 
 	[RPC]
