@@ -40,7 +40,7 @@ public class OnlineMovement : Photon.MonoBehaviour {
 	}
 	// Update is called once per frame
 	void Update () {
-		if (control_enabled && !dead) {
+		if (control_enabled && !dead && photonView.isMine) {
 			Movement ();
 			ShotCooldown ();
 			SniperShot();

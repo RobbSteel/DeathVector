@@ -31,9 +31,11 @@ public class ObjectiveManager : Photon.MonoBehaviour {
 	void GameEnd(int team_type){
 		if (team_type == 1) {
 			MessageLabel.text = "BLUE TEAM WINS!";
+			MessageLabel.color = Color.blue;
 			MessageLabel.alpha = 1;
 		} else {
 			MessageLabel.text = "RED TEAM WINS!";
+			MessageLabel.color = Color.red;
 			MessageLabel.alpha = 1;
 		}
 	}
