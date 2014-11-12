@@ -6,15 +6,16 @@ public class Tower : Photon.MonoBehaviour {
 	public GameObject Tower_Shot;
 	public GameObject explosion;
 	public GameObject tower_hit;
+	private bool shot_able = true;
 	public float Shot_Direction;
 	public float shot_timer = 3;
-	private bool shot_able = true;
 	public float shields_left = 100;
 	private float shields_display = 0;
 	public BuildCircleMesh circular_shield;
 	public ObjectiveManager game_manager;
 	public VectorGrid m_VectorGrid;
 	public Color tower_color;
+	public string Tower_Type;
 
 	// Use this for initialization
 	void Start () {
@@ -56,7 +57,8 @@ public class Tower : Photon.MonoBehaviour {
 	}
 
 	Vector3 FindTarget(){
-		GameObject[] playertargets = GameObject.FindGameObjectsWithTag ("Team1");
+		print (Tower_Type);
+		GameObject[] playertargets = GameObject.FindGameObjectsWithTag (Tower_Type);
 		float target_distance = 100;
 		Vector3 target_position = new Vector3 (0, 0, 0);
 		for (int i = 0; i < playertargets.Length; i++) {

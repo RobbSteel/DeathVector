@@ -19,6 +19,9 @@ public class OnlineShields : Photon.MonoBehaviour {
 	public Collider2D player_collider;
 	private bool dead = false;
 	private bool immune = false;
+	private float shields_left = 100;
+	private float shields_display = 0;
+	public BuildCircleMesh circular_shield;
 
 
 	
@@ -29,7 +32,10 @@ public class OnlineShields : Photon.MonoBehaviour {
 	void OnTriggerEnter2D(Collider2D col){
 		if (col.tag == "Damage" && photonView.isMine && !immune) {
 			if (col.GetComponent<Owner> ().playerowner != gameObject && col.GetComponent<Owner>().playerowner.tag != gameObject.tag) {	
-				Death ();
+				ShieldsCalculate(col.gameObject);
+				if(shields_left < 0){
+					Death ();
+				}
 				if(col.GetComponent<Owner>().playerowner.GetComponent<OnlineShields>() != null){;
 					col.GetComponent<Owner>().playerowner.GetComponent<OnlineShields>().PlayerKill();
 				}
@@ -43,6 +49,23 @@ public class OnlineShields : Photon.MonoBehaviour {
 
 	void OnTriggerExit2D(Collider2D col){
 	
+	}
+
+	void ShieldsCalculate(GameObject bullet){
+		float damage = 0;
+		float shield_hit = 0;
+		switch (bullet.name) {
+			case "SniperBullet(Clone)" : damage = 50; shield_hit = 180; break;
+			case "Bullet(Clone)" : damage = 30; shield_hit = 108; break;
+		}
+		shields_left -= damage;
+		shields_display += shield_hit;
+		photonView.RPC ("RelayShields", PhotonTargets.All, shields_display);
+	}
+
+	[RPC]
+	void RelayShields(float shields_left){
+		circular_shield.startAngle = shields_left;
 	}
 
 	public void SetUpKillDeath(GameObject ui_information){
@@ -80,13 +103,18 @@ public class OnlineShields : Photon.MonoBehaviour {
 
 	[RPC]
 	void Revive(){
+		circular_shield.startAngle = 0;
 		Player_Avatar.SetActive (true);
+
+
 	}
 
 	void Update(){
 		if (dead) {
 			if(death_timer < 0){
 				photonView.RPC ("Revive", PhotonTargets.All);
+				shields_left = 100;
+				shields_display = 0;
 				dead = false;
 				player_movement.dead = false;
 				immune = true;
