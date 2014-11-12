@@ -167,8 +167,11 @@ public class OnlineMovement : Photon.MonoBehaviour {
 		var mouseposition = Camera.main.ScreenToWorldPoint(new Vector3 (mousex,mousey,0));
 		var shotdirection = mouseposition - transform.position;
 		SniperAssist.SetActive(true);
-		//var angle = Mathf.Atan2 (mousex, mousey) * Mathf.Rad2Deg;
-		//SniperAssist.transform.rotation = Quaternion.AngleAxis (angle, Vector3.forward);
+		//var lookPos = player.transform.position - firespawn.transform.position;
+		var angle = Mathf.Atan2 (shotdirection.y, shotdirection.x) * Mathf.Rad2Deg;
+		SniperAssist.transform.rotation = Quaternion.AngleAxis (angle, Vector3.forward);
+		//var angle = Mathf.Atan2 (shotdirection.x, shotdirection.y) * Mathf.Rad2Deg;
+		//SniperAssist.transform.rotation = Quaternion.LookRotation(Vector3.forward, shotdirection);
 		snipercharge -= Time.deltaTime;
 		if (snipercharge < 0) {
 			GameObject player1bullet = (GameObject)Instantiate (sniperbullet, transform.position, transform.rotation);
