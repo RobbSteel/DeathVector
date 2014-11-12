@@ -22,6 +22,7 @@ public class OnlineShields : Photon.MonoBehaviour {
 	private float shields_left = 100;
 	private float shields_display = 0;
 	public BuildCircleMesh circular_shield;
+	public GameObject Immune_Shield;
 
 
 	
@@ -105,6 +106,12 @@ public class OnlineShields : Photon.MonoBehaviour {
 	void Revive(){
 		circular_shield.startAngle = 0;
 		Player_Avatar.SetActive (true);
+		Immune_Shield.SetActive (true);
+	}
+
+	[RPC]
+	void ShieldRemove(){
+		Immune_Shield.SetActive (false);
 	}
 
 	void Update(){
@@ -126,7 +133,7 @@ public class OnlineShields : Photon.MonoBehaviour {
 		if (immune) {
 			if(immunity_time < 0){
 				immune = false;
-				print ("immune");
+				photonView.RPC("ShieldRemove", PhotonTargets.All);
 			} else {
 				immunity_time -= Time.deltaTime;
 			}
