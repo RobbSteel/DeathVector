@@ -179,7 +179,7 @@ public class OnlineMovement : Photon.MonoBehaviour {
 			player1bullet.GetComponent<Sniperbullet>().m_VectorGrid = m_VectorGrid;
 			player1bullet.GetComponent<Owner>().playerowner = this.gameObject;
 			player1bullet.GetComponent<Sniperbullet> ().direction = new Vector3(shotdirection.x, shotdirection.y, 0);
-			photonView.RPC("SniperRelay", PhotonTargets.Others, mouseposition); 
+			photonView.RPC("SniperRelay", PhotonTargets.Others, new Vector3(shotdirection.x, shotdirection.y, 0)); 
 			shotcd = .1f;
 			fire = false;
 			snipercharge = 2f;
