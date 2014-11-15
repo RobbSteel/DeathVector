@@ -31,21 +31,34 @@ public class OnlineShields : Photon.MonoBehaviour {
 	}
 	
 	void OnTriggerEnter2D(Collider2D col){
-		if (col.tag == "Damage" && photonView.isMine && !immune) {
+		if (col.tag == "Damage" && photonView.isMine && !immune && !dead) {
 			if (col.GetComponent<Owner> ().playerowner != gameObject && col.GetComponent<Owner>().playerowner.tag != gameObject.tag) {	
 				ShieldsCalculate(col.gameObject);
 				if(shields_left < 0){
 					Death ();
+					if(col.GetComponent<Owner>().playerowner.GetComponent<OnlineShields>() != null){;
+						col.GetComponent<Owner>().playerowner.GetComponent<OnlineShields>().PlayerKill();
+					}
 				}
-				if(col.GetComponent<Owner>().playerowner.GetComponent<OnlineShields>() != null){;
-					col.GetComponent<Owner>().playerowner.GetComponent<OnlineShields>().PlayerKill();
-				}
+
 			}
 		}
 	}
 
 	void OnTriggerStay2D(Collider2D col){
-	
+		if (col.tag == "Damage" && photonView.isMine && !immune && col.gameObject.name == "Flamethrower" && !dead) {
+			print("here");
+			print (col.gameObject.name);
+			if (col.GetComponent<Owner> ().playerowner != gameObject && col.GetComponent<Owner>().playerowner.tag != gameObject.tag) {	
+				ShieldsCalculate(col.gameObject);
+				if(shields_left < 0){
+					Death ();
+					if(col.GetComponent<Owner>().playerowner.GetComponent<OnlineShields>() != null){;
+						col.GetComponent<Owner>().playerowner.GetComponent<OnlineShields>().PlayerKill();
+					}
+				}
+			}
+		}
 	}
 
 	void OnTriggerExit2D(Collider2D col){
@@ -58,6 +71,7 @@ public class OnlineShields : Photon.MonoBehaviour {
 		switch (bullet.name) {
 			case "SniperBullet(Clone)" : damage = 50; shield_hit = 180; break;
 			case "Bullet(Clone)" : damage = 30; shield_hit = 108; break;
+			case "Flamethrower" : damage = 1; shield_hit = 3.6f ; break;
 		}
 		shields_left -= damage;
 		shields_display += shield_hit;
@@ -97,7 +111,7 @@ public class OnlineShields : Photon.MonoBehaviour {
 	public void Death(){
 		player_collider.enabled = false;
 		photonView.RPC ("DeathRelay", PhotonTargets.All);
-		death_timer = 2;
+		death_timer = 5;
 		dead = true;
 		player_movement.dead = true;
 	}

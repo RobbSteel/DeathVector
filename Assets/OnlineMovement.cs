@@ -13,6 +13,9 @@ public class OnlineMovement : Photon.MonoBehaviour {
 	private float shotcd = 0;
 	private float snipercharge = .5f;
 	public GameObject SniperAssist;
+	public GameObject flamethrower;
+	public GameObject innerflamethrower;
+	public bool flamesactive;
 	public GameObject sniperbullet;
 	private string Fire_Method;
 
@@ -23,13 +26,13 @@ public class OnlineMovement : Photon.MonoBehaviour {
 	private string ability1control;
 	private string ability2control;
 	private string ability3control;
-	private Color playercolor;
+	public Color playercolor;
 
 	// Use this for initialization
 	void Start () {
 		m_VectorGrid = GameObject.Find("VectorGrid").GetComponent<VectorGrid>();
 		AssignControls ();
-		Fire_Method = "SniperShot";
+		Fire_Method = "FireInput";
 
 	}
 	
@@ -44,6 +47,7 @@ public class OnlineMovement : Photon.MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		if (control_enabled && !dead && photonView.isMine) {
+			print(rigidbody2D.velocity);
 			Movement ();
 			ShotCooldown ();
 			gameObject.SendMessage(Fire_Method);
@@ -119,8 +123,8 @@ public class OnlineMovement : Photon.MonoBehaviour {
 	}
 
 	[RPC]
-	void SniperRelay(Vector3 direction){
-	  GameObject player1bullet = (GameObject)Instantiate (sniperbullet, transform.position, transform.rotation);
+	void SniperRelay(Vector3 direction, Vector3 fire_position){
+	  GameObject player1bullet = (GameObject)Instantiate (sniperbullet, fire_position, transform.rotation);
 	  player1bullet.GetComponent<Sniperbullet>().playercolor = playercolor;
 	  player1bullet.GetComponent<Sniperbullet>().m_VectorGrid = m_VectorGrid;
 	  player1bullet.GetComponent<Owner>().playerowner = this.gameObject;
@@ -152,7 +156,7 @@ public class OnlineMovement : Photon.MonoBehaviour {
 			var sticky = Input.GetAxis (yfirecontrol) * -1;
 			var stickdirection = new Vector3(stickx, sticky, 0);
 			player1bullet.GetComponent<Sniperbullet> ().direction = stickdirection;
-			photonView.RPC("SniperRelay", PhotonTargets.Others, stickdirection); 
+			photonView.RPC("SniperRelay", PhotonTargets.Others, stickdirection, transform.position); 
 			shotcd = .1f;
 			fire = false;
 			snipercharge = 2f;
@@ -179,11 +183,42 @@ public class OnlineMovement : Photon.MonoBehaviour {
 			player1bullet.GetComponent<Sniperbullet>().m_VectorGrid = m_VectorGrid;
 			player1bullet.GetComponent<Owner>().playerowner = this.gameObject;
 			player1bullet.GetComponent<Sniperbullet> ().direction = new Vector3(shotdirection.x, shotdirection.y, 0);
-			photonView.RPC("SniperRelay", PhotonTargets.Others, new Vector3(shotdirection.x, shotdirection.y, 0)); 
+			photonView.RPC("SniperRelay", PhotonTargets.Others, new Vector3(shotdirection.x, shotdirection.y, 0), transform.position); 
 			shotcd = .1f;
 			fire = false;
 			snipercharge = 2f;
 			SniperAssist.SetActive(false);
+		}
+	}
+
+	[RPC]
+	void FireOn(){
+		flamethrower.SetActive (true);
+	}
+
+	[RPC]
+	void FireOff(){
+		flamethrower.SetActive (false);
+	}
+
+	void FireInput(){
+		Vector2 rightstick = new Vector2(Input.GetAxis(xfirecontrol),Input.GetAxis(yfirecontrol));
+		Vector3 direction = new Vector3(rightstick.x,rightstick.y, 0);
+		if (direction.magnitude > deadzone) {
+			if(!flamesactive){
+				flamethrower.SetActive(true);
+				flamesactive = true;
+			}
+			var stickx = Input.GetAxis (xfirecontrol);
+			var sticky = Input.GetAxis (yfirecontrol) * -1;
+			var angle = Mathf.Atan2 (sticky, stickx) * Mathf.Rad2Deg;
+			flamethrower.transform.rotation = Quaternion.AngleAxis (angle, Vector3.forward);
+			m_VectorGrid.AddGridForce (innerflamethrower.transform.position, .1f, .2f, playercolor, true);
+			photonView.RPC("FireOn", PhotonTargets.Others);
+		} else {
+			flamethrower.SetActive(false);
+			photonView.RPC("FireOff", PhotonTargets.Others);
+			flamesactive = false;
 		}
 	}
 
