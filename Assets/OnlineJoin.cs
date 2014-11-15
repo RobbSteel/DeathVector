@@ -12,6 +12,8 @@ public class OnlineJoin : Photon.MonoBehaviour {
 		PhotonNetwork.isMessageQueueRunning = true;
 		GameObject Start_Camera = GameObject.FindGameObjectWithTag ("MainCamera");
 		GameObject player_object = (GameObject)Instantiate(Online_player, Vector3.zero, Quaternion.identity);
+		Start_Camera.transform.parent = player_object.transform;
+		Start_Camera.transform.position = new Vector3(player_object.transform.position.x, player_object.transform.position.y, -.5f);
 		PlayerInfo player_info = GameObject.FindGameObjectWithTag ("PlayerInfo").GetComponent<PlayerInfo> ();
 		OnlineMovement player_movement = player_object.GetComponent<OnlineMovement> ();
 		OnlineShields player_shields = player_object.GetComponent<OnlineShields> ();

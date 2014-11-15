@@ -1,6 +1,4 @@
-﻿#if UNITY_EDITOR
-
-// Cartoon FX  - (c) 2014, Jean Moreno
+﻿// Cartoon FX  - (c) 2014, Jean Moreno
 
 // Help Component that can be added to any GameObject or Prefab
 // Can be useful if you want to add comments to a particular prefab about
@@ -16,11 +14,9 @@ public class CFX_InspectorHelp : MonoBehaviour
 	public string HelpText;
 	public int MsgType;
 	
-	[ContextMenu("Toggle Lock")]
-	void ToggleLock()
+	[ContextMenu("Unlock editing")]
+	void Unlock()
 	{
-		this.Locked = !this.Locked;
+		this.Locked = false;
 	}
 }
-
-#endif
